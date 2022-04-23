@@ -1,0 +1,29 @@
+{
+  "name": "final-project-node-server",
+  "version": "1.0.0",
+  "description": "Node.js web server for climalingo application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jackieder/webdev-final-project-node-server.git"
+  },
+  "keywords": [
+    "Node",
+    "REST",
+    "Server",
+    "HTTP"
+  ],
+  "author": "Jackie Der",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jackieder/webdev-final-project-node-server/issues"
+  },
+  "homepage": "https://github.com/jackieder/webdev-final-project-node-server#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.3"
+  }
+}
