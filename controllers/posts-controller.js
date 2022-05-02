@@ -1,34 +1,38 @@
 const postDao = require('../dao/posts-dao.js');
-const {findUserById} = require("../dao/users-dao");
+const {findUserById, findUserByIds} = require("../dao/users-dao");
 
 const findAllPosts = async (req, res) => {
-    const posts = await postDao.findAllPosts();
-
+    query = req.query
+    console.log(query.user)
+    let posts;
+    if(query.user !== undefined) {
+        posts = await postDao.findPostsByUser(query.user)
+    } else {
+        posts = await postDao.findAllPosts();
+    }
     res.json(posts)
 }
 
 const findMoviePosts = async (req, res) => {
-    const posts = await postDao.findMoviePosts(req.params.movie);
-    const formatted = []
-    for(i = 0; i < posts.length; i++) {
-        const user =  await findUserById(posts[i].user)
-        formatted[i] = {
-            text: posts[i].text,
-            email: user.email
-        }
-    }
 
+    const response = await postDao.findMoviePosts(req.params.movie)
+        .then(posts => {
+            return findUserByIds(posts.map(p => p.user)).then(users => {
+                usersDict = {}
+                users.forEach(user => usersDict[user._id] = user)
+                return posts.map(p => {
+                    u = usersDict[p.user];
+                    return {
+                        id: p._id,
+                        text: p.text,
+                        email: u.email,
+                        user_id: u._id
+                    }
+                })
+            })
+        })
 
-    const responseData = posts.map(async (e) => {
-        const u = await findUserById(e.user);
-        console.log(u.email)
-        return {
-            text: e.text,
-            user: u.email
-        }
-    })
-    console.log(responseData)
-    res.json(formatted)
+    res.json(response)
 }
 const createPost = async (req, res) => {
     const newPost = req.body;
@@ -43,21 +47,21 @@ const updatePost = async (req, res) => {
     res.send(status);
 }
 const deletePost = async (req, res) => {
-    const postToDelete = req.params.pid;
+    const postToDelete = req.params.pid
     const status = await postDao.deletePost(postToDelete);
     res.send(status);
 }
 
 const findPostsByUser = async (req, res) => {
-    const posts = await postDao.findPostsByUser(req.params.user.Id)
+    const posts = await postDao.findPostsByUser(req.params.userId)
     res.json(posts)
 }
 module.exports = (app) => {
     app.get("/api/posts", findAllPosts);
     app.get("/api/posts/:movie", findMoviePosts);
     app.post("/api/posts", createPost);
-    app.delete("/api/posts", deletePost);
+    app.delete("/api/posts/:pid", deletePost);
     app.put("/api/posts", updatePost);
-    app.get("api/posts/&user=:userId", findPostsByUser)
+    app.get("api/posts?user=:userId", findPostsByUser);
 }
 
