@@ -14,11 +14,14 @@ const findUserByCredentials = (email, password) =>
     userModel.findOne({email, password})
 const createUser = (user) =>
     userModel.create(user)
-const updateUser = (id, user) =>
-    userModel.updateOne(
+
+const updateUser = async (id, user) => {
+    const res = await userModel.updateOne(
         {_id: id},
-        { $set: user}
-    )
+        {$set: {"email": user.email, "password": user.password}}
+    );
+    return res
+}
 const deleteUser = (id) =>
     userModel.deleteOne({_id: id})
 

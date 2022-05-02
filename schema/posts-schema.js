@@ -4,9 +4,7 @@ const postsSchema = mongoose.Schema({
     user: String,
     datePosted: {type: Date, default: Date.now},
     movie: String,
-    postType: Boolean,
-    reposts: Number,
-    reposters: Array
+    upvote: {type: Number, default: 0}
 }, {collection: 'posts'});
 
 module.exports = postsSchema;

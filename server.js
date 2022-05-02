@@ -15,6 +15,7 @@ app.use(session({
     secret: 'SECRETO',
     cookie: {secure: false}
 }));
+
 app.use(express.json());
 require('./controllers/posts-controller')(app);
 require("./controllers/users-controller")(app);
