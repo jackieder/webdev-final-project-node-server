@@ -36,9 +36,20 @@ const findMoviePosts = async (req, res) => {
 }
 const createPost = async (req, res) => {
     const newPost = req.body;
-    console.log(newPost)
     const insertedPost = await postDao.createPost(newPost.body.text, newPost.body.movieId, newPost.userId)
         .then((insertedPost) => res.json(insertedPost))
+}
+
+const upvotePost = async (req, res) => {
+    const data = req.body;
+    const onePost = await postDao.findOnePost(data.reviewId)
+    let currCount = onePost.upvote
+    currCount++
+    const status = await postDao.updatePost(data.reviewId, {
+        upvote: currCount
+    });
+    const another = await postDao.findOnePost(data.reviewId)
+
 }
 const updatePost = async (req, res) => {
     const postIdUpdate = req.params.pid;
@@ -62,6 +73,7 @@ module.exports = (app) => {
     app.post("/api/posts", createPost);
     app.delete("/api/posts/:pid", deletePost);
     app.put("/api/posts", updatePost);
+    app.put("/api/posts/upvote", upvotePost);
     app.get("api/posts?user=:userId", findPostsByUser);
 }
 
